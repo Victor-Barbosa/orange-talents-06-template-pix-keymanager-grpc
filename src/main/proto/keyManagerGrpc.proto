@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "br.com.zup.edu";
+option java_outer_classname = "KeyManagerGrpc";
+option objc_class_prefix = "HLW";
+
+package br.com.zup.edu;
+
+service KeyManagerGrpcService {
+  rpc registra(RegistraChavePixRequest) returns (RegistraChavePixResponse){}
+}
+
+service RemoveChavePixService{
+  rpc remove(RemoveChavePixRequest) returns (RemoveChavePixResponse){}
+}
+
+service CarregaChavePixService{
+  rpc carrega (CarregaChavePixRequest) returns (CarregaChavePixResponse){}
+}
+
+service ListaChavePixService{
+  rpc lista (ListaChavePixRequest) returns (ListaChavePixResponse){}
+}
+
+message RegistraChavePixRequest{
+  string clienteId = 1;
+  TipoChave tipoChave = 2;
+  string chave = 3;
+  TipoConta tipoConta = 4;
+}
+
+message RegistraChavePixResponse{
+  string pixId = 1;
+}
+
+enum TipoChave{
+  UNKNOWN_CHAVE = 0;
+  CPF = 1;
+  CELULAR = 2;
+  EMAIL = 3;
+  ALEATORIA = 4;
+}
+
+enum TipoConta{
+  UNKNOWN_CONTA = 0;
+  CONTA_CORRENTE = 1;
+  CONTA_POUPANCA = 2;
+}
+
+message RemoveChavePixRequest{
+  string pixId = 1;
+  string clienteId = 2;
+}
+
+message RemoveChavePixResponse{
+  string mensagem = 1;
+}
+
+message CarregaChavePixRequest{
+
+  message FiltroPorPixEClienteId{
+    string clienteId = 1;
+    string pixId = 2;
+  }
+
+  oneof filtro{
+    FiltroPorPixEClienteId pixEClienteId = 1;
+    string chavePix = 2;
+  }
+}
+
+message CarregaChavePixResponse{
+  string clienteId = 1;
+  string pixId = 2;
+  ChavePix chavePix = 3;
+}
+
+message ContaInfo{
+  TipoConta tipoConta = 1;
+  string institucao = 2;
+  string nomeTitular = 3;
+  string cpfTitular = 4;
+  string agencia = 5;
+  string numeroConta = 6;
+}
+
+message ChavePix{
+  TipoChave tipoChave = 1;
+  string chave = 2;
+  ContaInfo contaInfo = 3;
+  google.protobuf.Timestamp criadaEm = 4;
+}
+
+message ListaChavePixRequest{
+  string clienteId = 1;
+}
+
+message ListaChavePixResponse{
+  string clienteId = 1;
+  repeated ChavePixLista chaves = 2;
+
+  message ChavePixLista{
+    string pixId = 1;
+    TipoChave tipoChave = 2;
+    string chave = 3;
+    TipoConta tipoConta = 4;
+    google.protobuf.Timestamp criadaEm = 5;
+  }
+}
+
