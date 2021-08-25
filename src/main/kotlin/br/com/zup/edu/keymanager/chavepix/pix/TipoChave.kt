@@ -1,7 +1,5 @@
 package br.com.zup.edu.keymanager.chavepix.pix
 
-import io.micronaut.validation.validator.constraints.EmailValidator
-
 enum class TipoChave {
 
     UNKNOWN_CHAVE {
@@ -26,14 +24,15 @@ enum class TipoChave {
 
     EMAIL {
         override fun valida(chave: String?): Boolean {
-            if (chave.isNullOrBlank()) {
-                return false
+            if (!chave.isNullOrBlank()) {
+                val regex =
+                    Regex("^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?" +
+                            "(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$")
+                if (chave.matches(regex)) return true
             }
-            return EmailValidator().run {
-                initialize(null)
-                isValid(chave, null)
-            }
+            return false
         }
+
     },
 
     ALEATORIA {
